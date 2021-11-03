@@ -1,24 +1,18 @@
-const contacts = require("../../model/contacts.json");
+const createError = require("http-errors");
+const { contacts: service } = require("../../services");
 
-const removeContact = (req, res) => {
+const removeContact = async (req, res, next) => {
   const { contactId } = req.params;
-
-  const idx = contacts.findIndex((contact) => contact.id === contactId);
-  if (idx === -1) {
-    return res.status(404).json({
-      status: "error",
-      code: 404,
-      message: "Not found",
-    });
+  const result = await service.deleteById(contactId);
+  if (!result) {
+    const error = createError(404, `Contact with id = ${contactId} not found`);
+    throw error;
   }
-  const deleteContact = contacts[idx];
-
-  contacts.splice(idx, 1);
   res.json({
     status: "success",
     code: 200,
     data: {
-      result: deleteContact,
+      result,
     },
   });
 };
