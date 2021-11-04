@@ -1,17 +1,19 @@
-const contacts = require("../../model/contacts.json");
-const { v4 } = require("uuid");
+const { contacts: service } = require("../../services");
 
-const addContact = (req, res) => {
-  const newContact = { ...req.body, id: v4() };
-  contacts.push(newContact);
+const addContact = async (req, res, next) => {
+  try {
+    const result = await service.add(req.body);
 
-  res.status(201).json({
-    status: "success",
-    code: 201,
-    data: {
-      result: newContact,
-    },
-  });
+    res.status(201).json({
+      status: "success",
+      code: 201,
+      data: {
+        result,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = addContact;
