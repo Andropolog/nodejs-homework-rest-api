@@ -1,8 +1,11 @@
 const { Contact } = require("../models");
 
 
-const getAll = () => {
-  return Contact.find({}, "_id name email phone favorite");
+const getAll = (pagination, filter) => {
+   const { page, limit } = pagination;
+   const skip = page * limit - limit;
+   return Contact.find(filter, "_id name", { skip, limit: +limit });
+  
 };
 
 const getById = (id) => {
@@ -33,4 +36,5 @@ module.exports = {
   updateStatusContact,
   deleteById,
 };
+
 
