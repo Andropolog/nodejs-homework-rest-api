@@ -1,15 +1,15 @@
-const getCurrentUser = (req, res, next) => {
-    const { subscription, email } = req.user;
-  
+const getCurrentUser = async (req, res, next) => {
+  try {
+    const { email, subscription } = req.user;
     res.json({
       status: "success",
       code: 200,
-      data: {
-        email: email,
-        subscription: subscription,
-      },
+      data: { email, subscription },
     });
-  };
-  
-  module.exports = getCurrentUser;
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = getCurrentUser;
   
