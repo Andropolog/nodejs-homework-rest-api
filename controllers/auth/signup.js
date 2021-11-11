@@ -1,5 +1,7 @@
 const gravatar = require("gravatar");
 const { users: service } = require("../../services");
+const { sendEmail } = require("../../utils");
+const { nanoid } = require("nanoid");
 
 const signup = async (req, res, next) => {
   try {
@@ -14,11 +16,21 @@ const signup = async (req, res, next) => {
     }
     req.body.avatarURL = gravatar.url(email);
 
-    await service.add(req.body);
+    const verifyToken = nanoid();
+    const userData = await service.add({ ...req.body, verifyToken });
+    const { URL } = process.env;
+    const emailToSend = {
+      to: userData.email,
+      subject: "Verify email",
+      html: `<a href="${URL}/api/v1/auth/verify/${verifyToken}" target="_blank">Please verify your email<a/>`,
+    };
+
+    await sendEmail(emailToSend);
+
     res.status(201).json({
       status: "success",
       code: 201,
-      message: "Success register",
+      message: "Successfully registered. Please verify your email!",
     });
   } catch (error) {
     next(error);

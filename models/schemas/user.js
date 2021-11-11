@@ -1,6 +1,7 @@
 const { Schema } = require("mongoose");
 const Joi = require("joi");
 const bcrypt = require("bcryptjs");
+const { nanoid } = require("nanoid");
 
 const emailRegex =
   /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
@@ -29,6 +30,15 @@ const userSchema = Schema({
   avatarURL: {
     name: String,
     avatar: String,
+  },
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verifyToken: {
+    type: String,
+    required: [true, "Verify token is required"],
+    default: nanoid(),
   },
 });
 
